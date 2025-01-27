@@ -49,7 +49,7 @@ class OpenAIService {
                     "content": [
                         [
                             "type": "text",
-                            "text": "Analyze this drawing and describe its composition, style, and key features in detail."
+                            "text": "Analyze this drawing and describe its composition, style, and key features in detail. Mention the type of image, such as 'illustration' or 'diagram'."
                         ],
                         [
                             "type": "image_url",
@@ -93,7 +93,7 @@ class OpenAIService {
         request.addValue("Bearer \(apiKey)", forHTTPHeaderField: "Authorization")
         request.addValue("application/json", forHTTPHeaderField: "Content-Type")
         
-        let prompt = "Create an artistic interpretation based on this description: \(description)"
+        let prompt = "Create an artistic interpretation based on this description: \(description). Take account image type mentioned in the description and try to create an image that matches the type but improves it."
         let payload: [String: Any] = [
             "model": "dall-e-3",
             "prompt": prompt,

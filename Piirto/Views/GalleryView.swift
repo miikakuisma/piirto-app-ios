@@ -3,7 +3,7 @@ import SwiftData
 
 struct GalleryView: View {
     @Environment(\.dismiss) private var dismiss
-    @State private var selectedImage: GeneratedImage?
+    @Binding var selectedImage: GeneratedImage?
     @Query private var images: [GeneratedImage]
     
     var body: some View {

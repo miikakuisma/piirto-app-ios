@@ -7,6 +7,7 @@ struct ContentView: View {
     @State private var toolPickerShows = true
     @State private var processingState: ProcessingState = .idle
     @State private var showGallery = false
+    @State private var selectedImage: GeneratedImage?
     @Query private var generatedImages: [GeneratedImage]
     @Environment(\.modelContext) private var modelContext
     private let openAIService = OpenAIService()
@@ -67,7 +68,6 @@ struct ContentView: View {
                                         }
                                         await MainActor.run {
                                             saveGeneratedImage(image, description: description)
-                                            showGallery = true
                                         }
                                     } catch {
                                         print("Error details: \(error)")
@@ -87,7 +87,10 @@ struct ContentView: View {
                     }
                 }
                 .sheet(isPresented: $showGallery) {
-                    GalleryView()
+                    GalleryView(selectedImage: $selectedImage)
+                }
+                .fullScreenCover(item: $selectedImage) { item in
+                    ImageDetailView(image: item)
                 }
         }
     }
@@ -98,5 +101,8 @@ struct ContentView: View {
         
         modelContext.insert(newImage)
         try? modelContext.save()
+        
+        selectedImage = newImage
+        showGallery = true
     }
 } 

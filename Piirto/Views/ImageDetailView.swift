@@ -14,9 +14,9 @@ struct ImageDetailView: View {
                             .scaledToFit()
                             .frame(maxWidth: geometry.size.width)
                         
-                        Text(image.imageDescription)
-                            .font(.body)
-                            .padding(.horizontal)
+                        // Text(image.imageDescription)
+                        //     .font(.body)
+                        //     .padding(.horizontal)
                         
                         Text(image.date.formatted())
                             .font(.caption)
