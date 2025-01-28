@@ -114,8 +114,14 @@ struct ContentView: View {
     }
     
     func saveGeneratedImage(_ uiImage: UIImage, description: String) {
-        guard let imageData = uiImage.jpegData(compressionQuality: 0.8) else { return }
-        let newImage = GeneratedImage(imageData: imageData, description: description)
+        guard let imageData = uiImage.jpegData(compressionQuality: 0.8),
+              let originalDrawingData = drawing.image(from: drawing.bounds, scale: 1).jpegData(compressionQuality: 0.8) else { return }
+        
+        let newImage = GeneratedImage(
+            imageData: imageData,
+            originalDrawingData: originalDrawingData,
+            description: description
+        )
         
         modelContext.insert(newImage)
         try? modelContext.save()

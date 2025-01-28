@@ -3,8 +3,10 @@ import SwiftData
 
 struct GalleryView: View {
     @Environment(\.dismiss) private var dismiss
+    @Environment(\.modelContext) private var modelContext
     @Binding var selectedImage: GeneratedImage?
     @Query private var images: [GeneratedImage]
+    @State private var imageToDelete: GeneratedImage?
     
     var body: some View {
         NavigationStack {
@@ -13,7 +15,7 @@ struct GalleryView: View {
                     ContentUnavailableView(
                         "No Generated Images",
                         systemImage: "photo.stack",
-                        description: Text("Use the magic wand to generate AI images from your drawings")
+                        description: Text("Use the AI magic to generate AI images from your drawings")
                     )
                 } else {
                     LazyVGrid(columns: [GridItem(.adaptive(minimum: 150))], spacing: 20) {
@@ -33,6 +35,9 @@ struct GalleryView: View {
                             .onTapGesture {
                                 selectedImage = item
                             }
+                            .onLongPressGesture {
+                                imageToDelete = item
+                            }
                         }
                     }
                     .padding()
@@ -46,6 +51,23 @@ struct GalleryView: View {
                         dismiss()
                     }
                 }
+            }
+            .alert("Delete Image", isPresented: .init(
+                get: { imageToDelete != nil },
+                set: { if !$0 { imageToDelete = nil } }
+            )) {
+                Button("Delete", role: .destructive) {
+                    if let image = imageToDelete {
+                        modelContext.delete(image)
+                        try? modelContext.save()
+                    }
+                    imageToDelete = nil
+                }
+                Button("Cancel", role: .cancel) {
+                    imageToDelete = nil
+                }
+            } message: {
+                Text("Are you sure you want to delete this image? This action cannot be undone.")
             }
             .fullScreenCover(item: $selectedImage) { item in
                 ImageDetailView(image: item)

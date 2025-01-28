@@ -4,19 +4,19 @@ struct ImageDetailView: View {
     let image: GeneratedImage
     @Environment(\.dismiss) private var dismiss
     @State private var scale: CGFloat = 1.0
+    @State private var showingOriginal = false
     
     var body: some View {
         GeometryReader { geometry in
             ZStack {
-                // Blurred background
                 Rectangle()
-                    .fill(.ultraThinMaterial)  // System material with blur
+                    .fill(.ultraThinMaterial)
                     .ignoresSafeArea()
                 
-                image.image
+                (showingOriginal ? image.originalDrawing : image.image)
                     .resizable()
                     .aspectRatio(contentMode: .fit)
-                    .frame(maxWidth: geometry.size.width * 0.9)  // 90% of screen width
+                    .frame(maxWidth: geometry.size.width * 0.9)
                     .scaleEffect(scale)
                     .gesture(
                         MagnificationGesture()
@@ -29,6 +29,19 @@ struct ImageDetailView: View {
                                 }
                             }
                     )
+                    .overlay(alignment: .topLeading) {
+                        Button {
+                            withAnimation {
+                                showingOriginal.toggle()
+                            }
+                        } label: {
+                            Image(systemName: showingOriginal ? "wand.and.stars.inverse" : "scribble")
+                                .font(.title)
+                                .foregroundStyle(.white)
+                                .shadow(radius: 2)
+                        }
+                        .padding()
+                    }
             }
             .overlay(alignment: .topTrailing) {
                 HStack(spacing: 20) {
@@ -58,6 +71,6 @@ struct ImageDetailView: View {
             }
         }
         .presentationBackground(.clear)
-        .presentationCornerRadius(16)  // Add rounded corners
+        .presentationCornerRadius(16)
     }
 } 
