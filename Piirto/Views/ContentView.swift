@@ -14,20 +14,6 @@ struct ContentView: View {
     @State private var currentDrawingPoint: CGPoint?
     @State private var characterInitialPosition: CGPoint?
     
-    enum ProcessingState {
-        case idle
-        case analyzing
-        case generating
-        
-        var message: String {
-            switch self {
-            case .idle: return ""
-            case .analyzing: return "Analyzing..."
-            case .generating: return "Generating..."
-            }
-        }
-    }
-    
     var body: some View {
         NavigationStack {
             ZStack {
@@ -37,52 +23,50 @@ struct ContentView: View {
                     currentDrawingPoint: $currentDrawingPoint
                 )
                 
-                CharacterView(currentDrawingPoint: $currentDrawingPoint)
-            }
-            .overlay(
-                processingState != .idle ? 
-                    ProgressView(processingState.message)
-                        .padding()
-                        .background(.bar)
-                        .cornerRadius(8)
-                    : nil
-            )
-            .toolbar {
-                ToolbarItem(placement: .topBarTrailing) {
-                    Button {
-                        Task {
-                            processingState = .analyzing
-                            do {
-                                let (image, description) = try await openAIService.generateImageFromDrawing(drawing) {
-                                    processingState = .generating
+                if !drawing.bounds.isEmpty {
+                    CharacterView(
+                        currentDrawingPoint: $currentDrawingPoint,
+                        drawing: $drawing,
+                        processingState: $processingState
+                    ) {
+                        // Only allow AI request when not processing
+                        if processingState == .idle {
+                            Task {
+                                processingState = .analyzing
+                                do {
+                                    let (image, description) = try await openAIService.generateImageFromDrawing(drawing) {
+                                        processingState = .generating
+                                    }
+                                    await MainActor.run {
+                                        saveGeneratedImage(image, description: description)
+                                    }
+                                } catch {
+                                    print("Error details: \(error)")
                                 }
-                                await MainActor.run {
-                                    saveGeneratedImage(image, description: description)
-                                }
-                            } catch {
-                                print("Error details: \(error)")
+                                processingState = .idle
                             }
-                            processingState = .idle
                         }
-                    } label: {
-                        Text("AI Magic")
-                            .fontWeight(.medium)
-                            .foregroundColor(.white)
-                            .padding(.horizontal, 16)
-                            .padding(.vertical, 8)
-                            .background(drawing.bounds.isEmpty ? Color.gray : Color.blue)
-                            .clipShape(RoundedRectangle(cornerRadius: 20))
                     }
-                    .disabled(drawing.bounds.isEmpty)
+                    .transition(
+                        .asymmetric(
+                            insertion: .opacity
+                                .combined(with: .move(edge: .bottom))
+                                .animation(.spring(response: 0.6, dampingFraction: 0.7)),
+                            removal: .opacity
+                                .combined(with: .move(edge: .bottom))
+                                .animation(.easeOut(duration: 0.3))
+                        )
+                    )
                 }
-                
+            }
+            .toolbar {
                 ToolbarItem(placement: .topBarTrailing) {
                     Button {
                         drawing = PKDrawing()
                     } label: {
                         Label("Erase all", systemImage: "trash")
                     }
-                    .tint(.red) // Add button tint
+                    .tint(.red)
                 }
                 
                 ToolbarItem(placement: .topBarLeading) {
