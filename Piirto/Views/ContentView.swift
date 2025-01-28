@@ -20,8 +20,8 @@ struct ContentView: View {
         var message: String {
             switch self {
             case .idle: return ""
-            case .analyzing: return "Processing..."
-            case .generating: return "Almost done..."
+            case .analyzing: return "Analyzing..."
+            case .generating: return "Generating..."
             }
         }
     }
@@ -39,15 +39,40 @@ struct ContentView: View {
                 )
                 .toolbar {
                     ToolbarItem(placement: .topBarTrailing) {
-                        Button("\(toolPickerShows ? "Hide" : "Show") tool picker", systemImage: "wrench.adjustable") {
-                            toolPickerShows.toggle()
+                        Button {
+                            Task {
+                                processingState = .analyzing
+                                do {
+                                    let (image, description) = try await openAIService.generateImageFromDrawing(drawing) {
+                                        processingState = .generating
+                                    }
+                                    await MainActor.run {
+                                        saveGeneratedImage(image, description: description)
+                                    }
+                                } catch {
+                                    print("Error details: \(error)")
+                                }
+                                processingState = .idle
+                            }
+                        } label: {
+                            Text("AI Magic")
+                                .fontWeight(.medium)
+                                .foregroundColor(.white)
+                                .padding(.horizontal, 16)
+                                .padding(.vertical, 8)
+                                .background(drawing.bounds.isEmpty ? Color.gray : Color.blue)
+                                .clipShape(RoundedRectangle(cornerRadius: 20))
                         }
+                        .disabled(drawing.bounds.isEmpty)
                     }
                     
                     ToolbarItem(placement: .topBarTrailing) {
-                        Button("Erase all", systemImage: "trash") {
+                        Button {
                             drawing = PKDrawing()
+                        } label: {
+                            Label("Erase all", systemImage: "trash")
                         }
+                        .tint(.red) // Add button tint
                     }
                     
                     ToolbarItem(placement: .topBarLeading) {
@@ -57,40 +82,33 @@ struct ContentView: View {
                                 preview: SharePreview("Drawing", image: drawing.image())
                             ) {
                                 Label("Share", systemImage: "square.and.arrow.up")
+                                    .foregroundColor(.white)
                             }
-                            
-                            Button {
-                                Task {
-                                    processingState = .analyzing
-                                    do {
-                                        let (image, description) = try await openAIService.generateImageFromDrawing(drawing) {
-                                            processingState = .generating
-                                        }
-                                        await MainActor.run {
-                                            saveGeneratedImage(image, description: description)
-                                        }
-                                    } catch {
-                                        print("Error details: \(error)")
-                                    }
-                                    processingState = .idle
-                                }
-                            } label: {
-                                Label("Magic", systemImage: "wand.and.stars")
-                            }
-                            
                             Button {
                                 showGallery.toggle()
                             } label: {
                                 Label("Gallery", systemImage: "photo.stack")
+                                    .foregroundColor(.white)
                             }
                         }
                     }
                 }
-                .sheet(isPresented: $showGallery) {
+                .toolbarBackground(.black.opacity(0.8), for: .navigationBar)
+                .toolbarBackground(.visible, for: .navigationBar)
+                .sheet(isPresented: $showGallery, onDismiss: {
+                    toolPickerShows = true  // Show tools again when gallery closes
+                }) {
                     GalleryView(selectedImage: $selectedImage)
                 }
-                .fullScreenCover(item: $selectedImage) { item in
-                    ImageDetailView(image: item)
+                .fullScreenCover(item: $selectedImage, onDismiss: {
+                    toolPickerShows = true  // Show tools again when detail view closes
+                }) {
+                    ImageDetailView(image: $0)
+                }
+                .onChange(of: showGallery) { _, isShowing in
+                    if isShowing {
+                        toolPickerShows = false  // Hide tools when gallery opens
+                    }
                 }
         }
     }

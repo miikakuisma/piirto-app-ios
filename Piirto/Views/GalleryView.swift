@@ -25,10 +25,10 @@ struct GalleryView: View {
                                     .frame(height: 150)
                                     .clipShape(RoundedRectangle(cornerRadius: 10))
                                 
-                                Text(item.imageDescription)
-                                    .font(.caption)
-                                    .lineLimit(2)
-                                    .multilineTextAlignment(.center)
+                                // Text(item.imageDescription)
+                                //     .font(.caption)
+                                //     .lineLimit(2)
+                                //     .multilineTextAlignment(.center)
                             }
                             .onTapGesture {
                                 selectedImage = item
