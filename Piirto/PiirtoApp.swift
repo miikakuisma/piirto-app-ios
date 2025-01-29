@@ -27,6 +27,7 @@ struct PiirtoApp: App {
         WindowGroup {
             ContentView()
                 .modelContainer(sharedModelContainer)
+                .preferredColorScheme(.light)  // Force light theme
         }
     }
 }

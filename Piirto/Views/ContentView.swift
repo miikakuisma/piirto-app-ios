@@ -13,6 +13,8 @@ struct ContentView: View {
     private let openAIService = OpenAIService()
     @State private var currentDrawingPoint: CGPoint?
     @State private var characterInitialPosition: CGPoint?
+    @StateObject private var settings = SettingsManager()
+    @State private var showSettings = false
     
     var body: some View {
         NavigationStack {
@@ -23,50 +25,67 @@ struct ContentView: View {
                     currentDrawingPoint: $currentDrawingPoint
                 )
                 
-                if !drawing.bounds.isEmpty {
-                    CharacterView(
-                        currentDrawingPoint: $currentDrawingPoint,
-                        drawing: $drawing,
-                        processingState: $processingState
-                    ) {
-                        // Only allow AI request when not processing
-                        if processingState == .idle {
-                            Task {
-                                processingState = .analyzing
-                                do {
-                                    let (image, description) = try await openAIService.generateImageFromDrawing(drawing) {
-                                        processingState = .generating
-                                    }
-                                    await MainActor.run {
-                                        saveGeneratedImage(image, description: description)
-                                    }
-                                } catch {
-                                    print("Error details: \(error)")
-                                }
-                                processingState = .idle
-                            }
+                if !drawing.bounds.isEmpty && settings.aiFeatureEnabled {
+                    if settings.aiControlType == .robot {
+                        CharacterView(
+                            currentDrawingPoint: $currentDrawingPoint,
+                            drawing: $drawing,
+                            processingState: $processingState
+                        ) {
+                            startAITask()
                         }
-                    }
-                    .transition(
-                        .asymmetric(
-                            insertion: .opacity
-                                .combined(with: .move(edge: .bottom))
-                                .animation(.spring(response: 0.6, dampingFraction: 0.7)),
-                            removal: .opacity
-                                .combined(with: .move(edge: .bottom))
-                                .animation(.easeOut(duration: 0.3))
+                        .transition(
+                            .asymmetric(
+                                insertion: .opacity
+                                    .combined(with: .move(edge: .bottom))
+                                    .animation(.spring(response: 0.6, dampingFraction: 0.7)),
+                                removal: .opacity
+                                    .combined(with: .move(edge: .bottom))
+                                    .animation(.easeOut(duration: 0.3))
+                            )
                         )
-                    )
+                    }
+                }
+            }
+            .overlay(alignment: .bottom) {
+                if settings.aiFeatureEnabled && settings.aiControlType == .button && !drawing.bounds.isEmpty {
+                    Button {
+                        startAITask()
+                    } label: {
+                        Label("AI Magic", systemImage: "sparkles")
+                            .font(.headline)
+                            .foregroundColor(.white)
+                            .frame(height: 44)
+                            .frame(maxWidth: 130)
+                            .background(
+                                processingState == .idle ? Color.blue : Color.gray
+                            )
+                            .clipShape(RoundedRectangle(cornerRadius: 22))
+                            .frame(maxWidth: .infinity, alignment: .trailing)
+                            .padding(.trailing)
+                    }
+                    .disabled(processingState != .idle)
+                    .padding()
+                    .transition(.move(edge: .bottom).combined(with: .opacity))
                 }
             }
             .toolbar {
                 ToolbarItem(placement: .topBarTrailing) {
-                    Button {
-                        drawing = PKDrawing()
-                    } label: {
-                        Label("Erase all", systemImage: "trash")
+                    HStack {
+                        Button {
+                            showSettings.toggle()
+                        } label: {
+                            Label("Settings", systemImage: "gear")
+                                .foregroundColor(.white)
+                        }
+                        
+                        Button {
+                            drawing = PKDrawing()
+                        } label: {
+                            Label("Erase all", systemImage: "trash")
+                        }
+                        .tint(.red)
                     }
-                    .tint(.red)
                 }
                 
                 ToolbarItem(placement: .topBarLeading) {
@@ -104,6 +123,28 @@ struct ContentView: View {
                     toolPickerShows = false  // Hide tools when gallery opens
                 }
             }
+        }
+        .sheet(isPresented: $showSettings) {
+            SettingsView(settings: settings)
+        }
+    }
+    
+    private func startAITask() {
+        guard processingState == .idle else { return }
+        
+        Task {
+            processingState = .analyzing
+            do {
+                let (image, description) = try await openAIService.generateImageFromDrawing(drawing) {
+                    processingState = .generating
+                }
+                await MainActor.run {
+                    saveGeneratedImage(image, description: description)
+                }
+            } catch {
+                print("Error details: \(error)")
+            }
+            processingState = .idle
         }
     }
     
