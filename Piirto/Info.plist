@@ -18,5 +18,7 @@
 			<string></string>
 		</dict>
 	</dict>
+	<key>SKPaymentTransactions</key>
+	<true/>
 </dict>
 </plist>

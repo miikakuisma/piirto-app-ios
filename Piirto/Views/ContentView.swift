@@ -15,6 +15,8 @@ struct ContentView: View {
     @State private var characterInitialPosition: CGPoint?
     @StateObject private var settings = SettingsManager()
     @State private var showSettings = false
+    @State private var showPurchaseView = false
+    let creditsManager = CreditsManager.shared
     
     var body: some View {
         NavigationStack {
@@ -57,7 +59,7 @@ struct ContentView: View {
                             .font(.headline)
                             .foregroundColor(.white)
                             .frame(height: 44)
-                            .frame(maxWidth: 150)
+                            .frame(maxWidth: 160)
                             .background(
                                 processingState == .idle ? Color.blue : Color.gray
                             )
@@ -73,6 +75,18 @@ struct ContentView: View {
             .toolbar {
                 ToolbarItem(placement: .topBarTrailing) {
                     HStack {
+                        Button {
+                            showPurchaseView = true
+                        } label: {
+                            Text("\(creditsManager.remainingCredits) credits")
+                                .font(.subheadline)
+                                .foregroundStyle(.white)
+                                .padding(.horizontal, 12)
+                                .padding(.vertical, 6)
+                                .background(.ultraThinMaterial)
+                                .clipShape(Capsule())
+                        }
+                        
                         Button {
                             showSettings.toggle()
                         } label: {
@@ -124,14 +138,35 @@ struct ContentView: View {
                     toolPickerShows = false  // Hide tools when gallery opens
                 }
             }
+            .onChange(of: showPurchaseView) { _, isShowing in
+                if isShowing {
+                    toolPickerShows = false  // Hide tools when purchase view opens
+                } else {
+                    toolPickerShows = true   // Show tools again when purchase view closes
+                }
+            }
         }
         .sheet(isPresented: $showSettings) {
             SettingsView(settings: settings)
+        }
+        .sheet(isPresented: $showPurchaseView, onDismiss: {
+            toolPickerShows = true  // Show tools again when purchase view closes
+        }) {
+            PurchaseCreditsView()
         }
     }
     
     private func startAITask() {
         guard processingState == .idle else { return }
+        
+        // Check if user has credits
+        guard creditsManager.useCredit() else {
+            showPurchaseView = true
+            return
+        }
+        
+        let generator = UINotificationFeedbackGenerator()
+        generator.notificationOccurred(.success)
         
         Task {
             processingState = .analyzing
