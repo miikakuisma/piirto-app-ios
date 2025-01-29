@@ -52,11 +52,12 @@ struct ContentView: View {
                     Button {
                         startAITask()
                     } label: {
-                        Label("AI Magic", systemImage: "sparkles")
+                        Label(processingState == .idle ? "AI Magic" : processingState.message,
+                              systemImage: processingState == .idle ? "sparkles" : "clock.arrow.circlepath")
                             .font(.headline)
                             .foregroundColor(.white)
                             .frame(height: 44)
-                            .frame(maxWidth: 130)
+                            .frame(maxWidth: 150)
                             .background(
                                 processingState == .idle ? Color.blue : Color.gray
                             )
