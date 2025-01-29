@@ -4,5 +4,19 @@
 <dict>
 	<key>NSCameraReactionEffectGesturesEnabledDefault</key>
 	<true/>
+	<key>UILaunchScreen</key>
+	<dict>
+		<key>UIColorName</key>
+		<string>white</string>
+		<key>UIImageName</key>
+		<string>robot-head</string>
+		<key>UIImageRespectsSafeAreaInsets</key>
+		<false/>
+		<key>UINavigationBar</key>
+		<dict>
+			<key>UIImageName</key>
+			<string></string>
+		</dict>
+	</dict>
 </dict>
 </plist>

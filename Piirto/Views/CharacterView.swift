@@ -47,34 +47,49 @@ struct CharacterView: View {
     
     var body: some View {
         ZStack {
-            // Robot face background
-            Image("robot-head")
-                .resizable()
-                .aspectRatio(contentMode: .fit)
+            if processingState == .generating {
+                // Show video during generation
+                VideoPlayerView(videoName: "robot-thinking")
+                    .aspectRatio(contentMode: .fit)
+                    .frame(width: characterSize, height: characterSize)
+                    .clipShape(RoundedRectangle(cornerRadius: 20))
+                    .transition(.opacity)
+            } else {
+                // Show static image and eyes
+                Image("robot-head")
+                    .resizable()
+                    .aspectRatio(contentMode: .fit)
+                    .frame(width: characterSize, height: characterSize)
+                    .transition(.opacity)
+                
+                // Left eye
+                Circle()
+                    .fill(.black)
+                    .frame(width: 12, height: 12)
+                    .offset(x: -27 + eyePosition.x * 8, y: -6 + eyePosition.y * 8)
+                    .scaleEffect(eyeScale)
+                    .animation(.spring(response: 0.2), value: eyePosition)
+                    .animation(.easeInOut(duration: 0.3), value: eyeScale)
+                
+                // Right eye
+                Circle()
+                    .fill(.black)
+                    .frame(width: 12, height: 12)
+                    .offset(x: 27 + eyePosition.x * 8, y: -6 + eyePosition.y * 8)
+                    .scaleEffect(eyeScale)
+                    .animation(.spring(response: 0.2), value: eyePosition)
+                    .animation(.easeInOut(duration: 0.3), value: eyeScale)
+            }
+            
+            // Invisible tap area that covers both states
+            Color.clear
+                .contentShape(Rectangle())
                 .frame(width: characterSize, height: characterSize)
                 .onTapGesture {
                     if !drawing.bounds.isEmpty && processingState == .idle {
                         onAIRequest()
                     }
                 }
-            
-            // Left eye
-            Circle()
-                .fill(.black)
-                .frame(width: 12, height: 12)
-                .offset(x: -27 + eyePosition.x * 8, y: -6 + eyePosition.y * 8)
-                .scaleEffect(eyeScale)
-                .animation(.spring(response: 0.2), value: eyePosition)
-                .animation(.easeInOut(duration: 0.3), value: eyeScale)
-            
-            // Right eye
-            Circle()
-                .fill(.black)
-                .frame(width: 12, height: 12)
-                .offset(x: 27 + eyePosition.x * 8, y: -6 + eyePosition.y * 8)
-                .scaleEffect(eyeScale)
-                .animation(.spring(response: 0.2), value: eyePosition)
-                .animation(.easeInOut(duration: 0.3), value: eyeScale)
             
             // Thinking bubble
             if processingState != .idle {
