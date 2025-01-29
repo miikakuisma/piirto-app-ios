@@ -3,38 +3,47 @@ import SwiftUI
 struct PurchaseCreditsView: View {
     @Environment(\.dismiss) private var dismiss
     let creditsManager = CreditsManager.shared
+    @State private var storeService = StoreService.shared
+    @State private var errorMessage: String?
+    @State private var showError = false
     
     var body: some View {
         NavigationStack {
-            VStack(spacing: 24) {
-                Text("Get More Generations")
-                    .font(.title2)
-                    .fontWeight(.bold)
-                
-                Text("Choose a package below to continue creating amazing art.")
-                    .multilineTextAlignment(.center)
-                    .foregroundStyle(.secondary)
-                    .padding(.horizontal)
-                
-                VStack(spacing: 16) {
-                    PurchaseOptionCard(
-                        product: creditsManager.basicPack,
-                        action: { /* Implement purchase */ }
-                    )
-                    
-                    PurchaseOptionCard(
-                        product: creditsManager.proPack,
-                        isBestValue: false,
-                        action: { /* Implement purchase */ }
-                    )
-                    
-                    PurchaseOptionCard(
-                        product: creditsManager.premiumPack,
-                        isBestValue: true,
-                        action: { /* Implement purchase */ }
-                    )
+            Group {
+                if storeService.purchaseInProgress {
+                    ProgressView("Processing purchase...")
+                } else {
+                    VStack(spacing: 24) {
+                        Text("Get More Generations")
+                            .font(.title2)
+                            .fontWeight(.bold)
+                        
+                        Text("Choose a package below to continue creating amazing art.")
+                            .multilineTextAlignment(.center)
+                            .foregroundStyle(.secondary)
+                            .padding(.horizontal)
+                        
+                        VStack(spacing: 16) {
+                            PurchaseOptionCard(
+                                product: creditsManager.basicPack,
+                                action: { purchase(creditsManager.basicPack.id) }
+                            )
+                            
+                            PurchaseOptionCard(
+                                product: creditsManager.proPack,
+                                isBestValue: false,
+                                action: { purchase(creditsManager.proPack.id) }
+                            )
+                            
+                            PurchaseOptionCard(
+                                product: creditsManager.premiumPack,
+                                isBestValue: true,
+                                action: { purchase(creditsManager.premiumPack.id) }
+                            )
+                        }
+                        .padding()
+                    }
                 }
-                .padding()
             }
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
@@ -42,6 +51,30 @@ struct PurchaseCreditsView: View {
                     Button("Done") {
                         dismiss()
                     }
+                }
+            }
+        }
+        .alert("Purchase Failed", isPresented: $showError, actions: {
+            Button("OK", role: .cancel) { }
+        }, message: {
+            Text(errorMessage ?? "Unknown error occurred")
+        })
+        .task {
+            await storeService.loadProducts()
+        }
+    }
+    
+    private func purchase(_ productId: String) {
+        Task {
+            do {
+                try await storeService.purchase(productId)
+                await MainActor.run {
+                    dismiss()
+                }
+            } catch {
+                await MainActor.run {
+                    errorMessage = error.localizedDescription
+                    showError = true
                 }
             }
         }

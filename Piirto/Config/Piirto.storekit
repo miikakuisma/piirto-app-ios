@@ -1,0 +1,65 @@
+{
+  "identifier" : "9A6D8A5F",
+  "nonRenewingSubscriptions" : [
+
+  ],
+  "products" : [
+    {
+      "displayPrice" : "4.99",
+      "familyShareable" : false,
+      "internalID" : "com.yourapp.piirto.credits.50",
+      "localizations" : [
+        {
+          "description" : "Generate 50 AI images",
+          "displayName" : "50 Generations",
+          "locale" : "en_US"
+        }
+      ],
+      "productID" : "com.yourapp.piirto.credits.50",
+      "referenceName" : "50 Credits Pack",
+      "type" : "Consumable"
+    },
+    {
+      "displayPrice" : "9.99",
+      "familyShareable" : false,
+      "internalID" : "com.yourapp.piirto.credits.150",
+      "localizations" : [
+        {
+          "description" : "Generate 150 AI images",
+          "displayName" : "150 Generations",
+          "locale" : "en_US"
+        }
+      ],
+      "productID" : "com.yourapp.piirto.credits.150",
+      "referenceName" : "150 Credits Pack",
+      "type" : "Consumable"
+    },
+    {
+      "displayPrice" : "19.99",
+      "familyShareable" : false,
+      "internalID" : "com.yourapp.piirto.credits.400",
+      "localizations" : [
+        {
+          "description" : "Generate 400 AI images",
+          "displayName" : "400 Generations",
+          "locale" : "en_US"
+        }
+      ],
+      "productID" : "com.yourapp.piirto.credits.400",
+      "referenceName" : "400 Credits Pack",
+      "type" : "Consumable"
+    }
+  ],
+  "settings" : {
+    "_applicationInternalID" : "com.yourapp.piirto",
+    "_developerTeamID" : "38BP9ZZSBY",
+    "_lastSynchronizedDate" : 719164935.96324003
+  },
+  "subscriptionGroups" : [
+
+  ],
+  "version" : {
+    "major" : 3,
+    "minor" : 0
+  }
+} 
