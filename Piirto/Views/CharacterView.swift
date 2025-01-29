@@ -12,9 +12,9 @@ struct CharacterView: View {
         let isPortrait = screen.bounds.height > screen.bounds.width
         
         if isPortrait {
-            return CGPoint(x: screen.bounds.width / 2, y: screen.bounds.height - 260)
+            return CGPoint(x: screen.bounds.width / 2, y: screen.bounds.height - 270)
         } else {
-            return CGPoint(x: screen.bounds.width - 100, y: screen.bounds.height - 150) 
+            return CGPoint(x: screen.bounds.width - 100, y: screen.bounds.height - 170) 
         }
     }()
     @State private var isDragging = false
@@ -38,9 +38,9 @@ struct CharacterView: View {
         
         withAnimation(.spring(response: 0.6, dampingFraction: 0.7)) {
             if isPortrait {
-                position = CGPoint(x: screen.bounds.width / 2, y: screen.bounds.height - 260)
+                position = CGPoint(x: screen.bounds.width / 2, y: screen.bounds.height - 270)
             } else {
-                position = CGPoint(x: screen.bounds.width - 100, y: screen.bounds.height - 150)
+                position = CGPoint(x: screen.bounds.width - 100, y: screen.bounds.height - 170)
             }
         }
     }
@@ -49,24 +49,33 @@ struct CharacterView: View {
         ZStack {
             if processingState == .generating {
                 // Show video during generation
-                VideoPlayerView(videoName: "robot-thinking")
+                VideoPlayerView(videoName: "robot-ai-progress")
                     .aspectRatio(contentMode: .fit)
                     .frame(width: characterSize, height: characterSize)
                     .clipShape(RoundedRectangle(cornerRadius: 20))
+                    .background(.clear)
                     .transition(.opacity)
             } else {
                 // Show static image and eyes
-                Image("robot-head")
-                    .resizable()
+                // Image("robot-head")
+                //     .resizable()
+                //     .aspectRatio(contentMode: .fit)
+                //     .frame(width: characterSize, height: characterSize)
+                //     .transition(.opacity)
+                //     .background(Color(red: 244/255, green: 244/255, blue: 244/255))
+                //     .clipShape(RoundedRectangle(cornerRadius: 20))
+                VideoPlayerView(videoName: "robot-idle")
                     .aspectRatio(contentMode: .fit)
                     .frame(width: characterSize, height: characterSize)
+                    .clipShape(RoundedRectangle(cornerRadius: 20))
+                    .background(.clear)
                     .transition(.opacity)
                 
                 // Left eye
                 Circle()
                     .fill(.black)
-                    .frame(width: 12, height: 12)
-                    .offset(x: -27 + eyePosition.x * 8, y: -6 + eyePosition.y * 8)
+                    .frame(width: 10, height: 10)
+                    .offset(x: -20 + eyePosition.x * 5, y: -17 + eyePosition.y * 5)
                     .scaleEffect(eyeScale)
                     .animation(.spring(response: 0.2), value: eyePosition)
                     .animation(.easeInOut(duration: 0.3), value: eyeScale)
@@ -74,8 +83,8 @@ struct CharacterView: View {
                 // Right eye
                 Circle()
                     .fill(.black)
-                    .frame(width: 12, height: 12)
-                    .offset(x: 27 + eyePosition.x * 8, y: -6 + eyePosition.y * 8)
+                    .frame(width: 10, height: 10)
+                    .offset(x: 24 + eyePosition.x * 5, y: -17 + eyePosition.y * 5)
                     .scaleEffect(eyeScale)
                     .animation(.spring(response: 0.2), value: eyePosition)
                     .animation(.easeInOut(duration: 0.3), value: eyeScale)
@@ -94,7 +103,7 @@ struct CharacterView: View {
             // Thinking bubble
             if processingState != .idle {
                 ThinkingBubbleView(message: processingState.message)
-                    .offset(y: -characterSize)
+                    .offset(y: -characterSize + 10)
                     .transition(.scale.combined(with: .opacity))
             }
         }

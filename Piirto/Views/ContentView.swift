@@ -16,6 +16,7 @@ struct ContentView: View {
     @StateObject private var settings = SettingsManager()
     @State private var showSettings = false
     @State private var showPurchaseView = false
+    @State private var showClearConfirmation = false
     let creditsManager = CreditsManager.shared
     
     var body: some View {
@@ -95,7 +96,7 @@ struct ContentView: View {
                         }
                         
                         Button {
-                            drawing = PKDrawing()
+                            showClearConfirmation = true  // Show confirmation instead of clearing directly
                         } label: {
                             Label("Erase all", systemImage: "trash")
                         }
@@ -144,6 +145,14 @@ struct ContentView: View {
                 } else {
                     toolPickerShows = true   // Show tools again when purchase view closes
                 }
+            }
+            .alert("Clear Canvas", isPresented: $showClearConfirmation) {
+                Button("Cancel", role: .cancel) { }
+                Button("Clear", role: .destructive) {
+                    drawing = PKDrawing()
+                }
+            } message: {
+                Text("Are you sure you want to clear your drawing? This action cannot be undone.")
             }
         }
         .sheet(isPresented: $showSettings) {
