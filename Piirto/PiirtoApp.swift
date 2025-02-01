@@ -8,6 +8,7 @@
 import SwiftUI
 import SwiftData
 import StoreKit
+import PencilKit
 
 @main
 struct PiirtoApp: App {
@@ -27,6 +28,17 @@ struct PiirtoApp: App {
     init() {
         // Start observing transactions
         PiirtoApp.setupTransactionObserver()
+        
+        // Set default PencilKit settings
+        let defaults = UserDefaults.standard
+        if defaults.object(forKey: "PKPaletteNamedDefaults") == nil {
+            defaults.set(Dictionary<String, Any>(), forKey: "PKPaletteNamedDefaults")
+        }
+        
+        // Set initial tool (optional)
+        if defaults.object(forKey: "PKDrawingToolPreferred") == nil {
+            defaults.set("pen", forKey: "PKDrawingToolPreferred")
+        }
     }
     
     var body: some Scene {
