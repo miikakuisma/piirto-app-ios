@@ -38,9 +38,9 @@ class CreditsManager {
     }
     
     init() {
-        // Give 10 free credits on first launch
+        // Give 5 free credits on first launch
         if !UserDefaults.standard.bool(forKey: firstLaunchKey) {
-            remainingCredits = 10
+            remainingCredits = 5
             UserDefaults.standard.set(true, forKey: firstLaunchKey)
         }
     }

@@ -18,59 +18,62 @@ struct ContentView: View {
     @State private var showPurchaseView = false
     @State private var showClearConfirmation = false
     let creditsManager = CreditsManager.shared
+    @Environment(\.horizontalSizeClass) private var horizontalSizeClass
+    @State private var orientation = UIDevice.current.orientation
+    @State private var showError = false
+    @State private var errorMessage = ""
     
     var body: some View {
         NavigationStack {
-            ZStack {
-                CanvasView(
-                    drawing: $drawing,
-                    toolPickerShows: $toolPickerShows,
-                    currentDrawingPoint: $currentDrawingPoint
-                )
-                
-                if !drawing.bounds.isEmpty && settings.aiFeatureEnabled {
-                    if settings.aiControlType == .robot {
-                        CharacterView(
-                            currentDrawingPoint: $currentDrawingPoint,
-                            drawing: $drawing,
-                            processingState: $processingState
-                        ) {
-                            startAITask()
-                        }
-                        .transition(
-                            .asymmetric(
-                                insertion: .opacity
-                                    .combined(with: .move(edge: .bottom))
-                                    .animation(.spring(response: 0.6, dampingFraction: 0.7)),
-                                removal: .opacity
-                                    .combined(with: .move(edge: .bottom))
-                                    .animation(.easeOut(duration: 0.3))
+            GeometryReader { geometry in
+                ZStack {
+                    CanvasView(
+                        drawing: $drawing,
+                        toolPickerShows: $toolPickerShows,
+                        currentDrawingPoint: $currentDrawingPoint
+                    )
+                    
+                    if !drawing.bounds.isEmpty && settings.aiFeatureEnabled {
+                        if settings.aiControlType == .robot {
+                            CharacterView(
+                                currentDrawingPoint: $currentDrawingPoint,
+                                drawing: $drawing,
+                                processingState: $processingState
+                            ) {
+                                startAITask()
+                            }
+                            .transition(
+                                .asymmetric(
+                                    insertion: .opacity
+                                        .combined(with: .move(edge: .bottom))
+                                        .animation(.spring(response: 0.6, dampingFraction: 0.7)),
+                                    removal: .opacity
+                                        .combined(with: .move(edge: .bottom))
+                                        .animation(.easeOut(duration: 0.3))
+                                )
                             )
+                        }
+                    }
+                    
+                    // AI Magic Button with dynamic positioning
+                    if settings.aiControlType == .button {
+                        Button {
+                            handleAIRequest()
+                        } label: {
+                            Label("AI Magic", systemImage: "sparkles")
+                                .font(.headline)
+                                .padding()
+                                .background(.ultraThinMaterial)
+                                .clipShape(Capsule())
+                        }
+                        .disabled(drawing.bounds.isEmpty || processingState != .idle)
+                        .position(
+                            x: geometry.size.width / 2,
+                            y: isPortrait(geometry.size) 
+                                ? geometry.size.height - 120 // Higher position in portrait
+                                : geometry.size.height - 60  // Lower position in landscape
                         )
                     }
-                }
-            }
-            .overlay(alignment: .bottom) {
-                if settings.aiFeatureEnabled && settings.aiControlType == .button && !drawing.bounds.isEmpty {
-                    Button {
-                        startAITask()
-                    } label: {
-                        Label(processingState == .idle ? "AI Magic" : processingState.message,
-                              systemImage: processingState == .idle ? "sparkles" : "clock.arrow.circlepath")
-                            .font(.headline)
-                            .foregroundColor(.white)
-                            .frame(height: 44)
-                            .frame(maxWidth: 160)
-                            .background(
-                                processingState == .idle ? Color.blue : Color.gray
-                            )
-                            .clipShape(RoundedRectangle(cornerRadius: 22))
-                            .frame(maxWidth: .infinity, alignment: .trailing)
-                            .padding(.trailing)
-                    }
-                    .disabled(processingState != .idle)
-                    .padding()
-                    .transition(.move(edge: .bottom).combined(with: .opacity))
                 }
             }
             .toolbar {
@@ -163,6 +166,14 @@ struct ContentView: View {
         }) {
             PurchaseCreditsView()
         }
+        .alert("Error", isPresented: $showError) {
+            Button("OK", role: .cancel) { }
+        } message: {
+            Text(errorMessage)
+        }
+        .onOrientationChange {
+            orientation = UIDevice.current.orientation
+        }
     }
     
     private func startAITask() {
@@ -187,7 +198,11 @@ struct ContentView: View {
                     saveGeneratedImage(image, description: description)
                 }
             } catch {
-                print("Error details: \(error)")
+                await MainActor.run {
+                    errorMessage = error.localizedDescription
+                    showError = true
+                    processingState = .idle
+                }
             }
             processingState = .idle
         }
@@ -208,5 +223,14 @@ struct ContentView: View {
         
         selectedImage = newImage
         showGallery = true
+    }
+    
+    // Helper function to determine orientation based on size
+    private func isPortrait(_ size: CGSize) -> Bool {
+        size.height > size.width
+    }
+    
+    private func handleAIRequest() {
+        startAITask()
     }
 } 

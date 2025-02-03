@@ -1,6 +1,0 @@
-import Foundation
-
-struct APIConfig {
-    // Replace with your actual API key
-    static let openAIKey = "YOUR_API_KEY"
-} 

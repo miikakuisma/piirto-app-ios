@@ -3,6 +3,7 @@ import SwiftUI
 struct SettingsView: View {
     @Environment(\.dismiss) private var dismiss
     @ObservedObject var settings: SettingsManager
+    @State private var showPrivacyPolicy = false
     
     var body: some View {
         NavigationStack {
@@ -24,6 +25,12 @@ struct SettingsView: View {
                         Text("Choose between a friendly robot assistant or a simple magic button")
                     }
                 }
+                
+                Button {
+                    showPrivacyPolicy = true
+                } label: {
+                    Label("Privacy Policy", systemImage: "lock.shield")
+                }
             }
             .navigationTitle("Settings")
             .navigationBarTitleDisplayMode(.inline)
@@ -33,6 +40,9 @@ struct SettingsView: View {
                         dismiss()
                     }
                 }
+            }
+            .sheet(isPresented: $showPrivacyPolicy) {
+                PrivacyPolicyView()
             }
         }
     }

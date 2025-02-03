@@ -1,0 +1,18 @@
+import Foundation
+
+enum APIConfig {
+    static let openAIKey = "YOUR_OPENAI_API_KEY"
+    static let openAIOrg = "YOUR_OPENAI_ORG_ID"
+    
+    static let baseURL = "https://api.openai.com/v1"
+    static let imageEndpoint = "/images/generations"
+    static let visionEndpoint = "/chat/completions"
+    
+    static var headers: [String: String] {
+        [
+            "Content-Type": "application/json",
+            "Authorization": "Bearer \(openAIKey)",
+            "OpenAI-Organization": openAIOrg
+        ]
+    }
+} 
