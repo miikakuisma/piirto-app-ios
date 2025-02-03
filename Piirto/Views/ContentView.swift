@@ -54,31 +54,29 @@ struct ContentView: View {
                             )
                         }
                     }
-                    
-                    // AI Magic Button with dynamic positioning
-                    if settings.aiControlType == .button {
-                        Button {
-                            handleAIRequest()
-                        } label: {
-                            Label("AI Magic", systemImage: "sparkles")
-                                .font(.headline)
-                                .padding()
-                                .background(.ultraThinMaterial)
-                                .clipShape(Capsule())
-                        }
-                        .disabled(drawing.bounds.isEmpty || processingState != .idle)
-                        .position(
-                            x: geometry.size.width / 2,
-                            y: isPortrait(geometry.size) 
-                                ? geometry.size.height - 120 // Higher position in portrait
-                                : geometry.size.height - 60  // Lower position in landscape
-                        )
-                    }
                 }
             }
             .toolbar {
                 ToolbarItem(placement: .topBarTrailing) {
                     HStack {
+                        if settings.aiControlType == .button {
+                            Button {
+                                handleAIRequest()
+                            } label: {
+                                Label("AI Magic", systemImage: "sparkles")
+                                    .font(.headline)
+                                    .foregroundStyle(.white)
+                                    .padding(.horizontal, 12)
+                                    .padding(.vertical, 2)
+                                    .background(.ultraThinMaterial)
+                                    .clipShape(Capsule())
+                                    .opacity(processingState != .idle ? 0.6 : 1.0)
+                                    .animation(.easeInOut(duration: 0.6).repeatForever(), value: processingState)
+                                    .scaleEffect(processingState != .idle ? 0.95 : 1.0)
+                            }
+                            .disabled(drawing.bounds.isEmpty || processingState != .idle)
+                        }
+                        
                         Button {
                             showPurchaseView = true
                         } label: {
@@ -233,4 +231,4 @@ struct ContentView: View {
     private func handleAIRequest() {
         startAITask()
     }
-} 
+}
