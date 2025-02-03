@@ -24,13 +24,13 @@ struct PrivacyPolicyView: View {
                         
                         Text("Data Storage")
                             .font(.headline)
-                        Text("All generated images are stored locally on your device. You can delete them at any time through the gallery.")
+                        Text("All generated images are stored locally on your device. You can delete them at any time through the gallery by tapping and holding the image.")
                     }
                     
                     Group {
                         Text("Contact")
                             .font(.headline)
-                        Text("If you have any questions about this Privacy Policy, please contact us at: [Your Contact Email]")
+                        Text("If you have any questions about this Privacy Policy, please contact us at: piirto@tatami.dev")
                     }
                 }
                 .padding()
