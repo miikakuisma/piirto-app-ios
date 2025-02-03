@@ -59,7 +59,7 @@ struct ContentView: View {
             .toolbar {
                 ToolbarItem(placement: .topBarTrailing) {
                     HStack {
-                        if settings.aiControlType == .button {
+                        if settings.aiControlType == .button && !drawing.bounds.isEmpty {
                             Button {
                                 handleAIRequest()
                             } label: {
@@ -67,11 +67,11 @@ struct ContentView: View {
                                     .font(.headline)
                                     .foregroundStyle(.white)
                                     .padding(.horizontal, 12)
-                                    .padding(.vertical, 2)
+                                    .padding(.vertical, 3)
                                     .background(.ultraThinMaterial)
                                     .clipShape(Capsule())
                                     .opacity(processingState != .idle ? 0.6 : 1.0)
-                                    .animation(.easeInOut(duration: 0.6).repeatForever(), value: processingState)
+                                    .animation(processingState != .idle ? .easeInOut(duration: 0.6).repeatForever() : .default, value: processingState)
                                     .scaleEffect(processingState != .idle ? 0.95 : 1.0)
                             }
                             .disabled(drawing.bounds.isEmpty || processingState != .idle)
