@@ -7,7 +7,7 @@
     {
       "displayPrice" : "4.99",
       "familyShareable" : false,
-      "internalID" : "com.yourapp.piirto.credits.50",
+      "internalID" : "dev.tatami.piirtoapp.credits.50",
       "localizations" : [
         {
           "description" : "Generate 50 AI images",
@@ -15,14 +15,14 @@
           "locale" : "en_US"
         }
       ],
-      "productID" : "com.yourapp.piirto.credits.50",
+      "productID" : "dev.tatami.piirtoapp.credits.50",
       "referenceName" : "50 Credits Pack",
       "type" : "Consumable"
     },
     {
       "displayPrice" : "9.99",
       "familyShareable" : false,
-      "internalID" : "com.yourapp.piirto.credits.150",
+      "internalID" : "dev.tatami.piirtoapp.credits.150",
       "localizations" : [
         {
           "description" : "Generate 150 AI images",
@@ -30,14 +30,14 @@
           "locale" : "en_US"
         }
       ],
-      "productID" : "com.yourapp.piirto.credits.150",
+      "productID" : "dev.tatami.piirtoapp.credits.150",
       "referenceName" : "150 Credits Pack",
       "type" : "Consumable"
     },
     {
       "displayPrice" : "19.99",
       "familyShareable" : false,
-      "internalID" : "com.yourapp.piirto.credits.400",
+      "internalID" : "dev.tatami.piirtoapp.credits.400",
       "localizations" : [
         {
           "description" : "Generate 400 AI images",
@@ -45,13 +45,13 @@
           "locale" : "en_US"
         }
       ],
-      "productID" : "com.yourapp.piirto.credits.400",
+      "productID" : "dev.tatami.piirtoapp.credits.400",
       "referenceName" : "400 Credits Pack",
       "type" : "Consumable"
     }
   ],
   "settings" : {
-    "_applicationInternalID" : "com.yourapp.piirto",
+    "_applicationInternalID" : "dev.tatami.piirtoapp",
     "_developerTeamID" : "38BP9ZZSBY",
     "_lastSynchronizedDate" : 719164935.96324003
   },

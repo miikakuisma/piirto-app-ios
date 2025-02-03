@@ -63,11 +63,11 @@ struct PiirtoApp: App {
             
             // Handle the transaction
             switch transaction.productID {
-            case "com.yourapp.piirto.credits.50":
+            case "dev.tatami.piirtoapp.credits.50":
                 CreditsManager.shared.remainingCredits += 50
-            case "com.yourapp.piirto.credits.150":
+            case "dev.tatami.piirtoapp.credits.150":
                 CreditsManager.shared.remainingCredits += 150
-            case "com.yourapp.piirto.credits.400":
+            case "dev.tatami.piirtoapp.credits.400":
                 CreditsManager.shared.remainingCredits += 400
             default:
                 break

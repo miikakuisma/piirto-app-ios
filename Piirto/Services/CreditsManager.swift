@@ -9,7 +9,7 @@ class CreditsManager {
     private let firstLaunchKey = "is_first_launch"
     
     let basicPack = Product(
-        id: "com.yourapp.piirto.credits.50",
+        id: "dev.tatami.piirtoapp.credits.50",
         title: "50 Generations",
         description: "Generate 50 AI images",
         price: "4.99€",
@@ -17,7 +17,7 @@ class CreditsManager {
     )
     
     let proPack = Product(
-        id: "com.yourapp.piirto.credits.150",
+        id: "dev.tatami.piirtoapp.credits.150",
         title: "150 Generations",
         description: "Generate 150 AI images",
         price: "9.99€",
@@ -25,7 +25,7 @@ class CreditsManager {
     )
     
     let premiumPack = Product(
-        id: "com.yourapp.piirto.credits.400",
+        id: "dev.tatami.piirtoapp.credits.400",
         title: "400 Generations",
         description: "Generate 400 AI images",
         price: "19.99€",
