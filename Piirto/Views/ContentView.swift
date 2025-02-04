@@ -56,10 +56,45 @@ struct ContentView: View {
                     }
                 }
             }
+            .navigationBarTitleDisplayMode(.inline)
             .toolbar {
+                ToolbarItem(placement: .topBarLeading) {
+                    HStack {
+                        ShareLink(
+                            item: drawing.image(),
+                            preview: SharePreview("Drawing", image: drawing.image())
+                        ) {
+                            Label("Share", systemImage: "square.and.arrow.up")
+                                .foregroundColor(.black.opacity(0.8))
+                        }
+                        Button {
+                            showGallery.toggle()
+                        } label: {
+                            Label("Gallery", systemImage: "photo.stack")
+                                .foregroundColor(.black.opacity(0.8))
+                        }
+                    }
+                }
+                
+                ToolbarItem(placement: .principal) {
+                    if settings.aiFeatureEnabled {
+                        Button {
+                            showPurchaseView = true
+                        } label: {
+                            Text("\(creditsManager.remainingCredits) credits")
+                                .font(.subheadline)
+                                .foregroundStyle(.white)
+                                .padding(.horizontal, 12)
+                                .padding(.vertical, 6)
+                                .background(.black.opacity(0.8))
+                                .clipShape(Capsule())
+                        }
+                    }
+                }
+                
                 ToolbarItem(placement: .topBarTrailing) {
                     HStack {
-                        if settings.aiControlType == .button && !drawing.bounds.isEmpty {
+                        if settings.aiControlType == .button && !drawing.bounds.isEmpty && settings.aiFeatureEnabled {
                             Button {
                                 handleAIRequest()
                             } label: {
@@ -68,7 +103,7 @@ struct ContentView: View {
                                     .foregroundStyle(.white)
                                     .padding(.horizontal, 12)
                                     .padding(.vertical, 3)
-                                    .background(.ultraThinMaterial)
+                                    .background(.blue)
                                     .clipShape(Capsule())
                                     .opacity(processingState != .idle ? 0.6 : 1.0)
                                     .animation(processingState != .idle ? .easeInOut(duration: 0.6).repeatForever() : .default, value: processingState)
@@ -78,52 +113,22 @@ struct ContentView: View {
                         }
                         
                         Button {
-                            showPurchaseView = true
-                        } label: {
-                            Text("\(creditsManager.remainingCredits) credits")
-                                .font(.subheadline)
-                                .foregroundStyle(.white)
-                                .padding(.horizontal, 12)
-                                .padding(.vertical, 6)
-                                .background(.ultraThinMaterial)
-                                .clipShape(Capsule())
-                        }
-                        
-                        Button {
                             showSettings.toggle()
                         } label: {
                             Label("Settings", systemImage: "gear")
-                                .foregroundColor(.white)
+                                .foregroundColor(.black.opacity(0.8))
                         }
                         
                         Button {
-                            showClearConfirmation = true  // Show confirmation instead of clearing directly
+                            showClearConfirmation = true
                         } label: {
                             Label("Erase all", systemImage: "trash")
                         }
                         .tint(.red)
                     }
                 }
-                
-                ToolbarItem(placement: .topBarLeading) {
-                    HStack {
-                        ShareLink(
-                            item: drawing.image(),
-                            preview: SharePreview("Drawing", image: drawing.image())
-                        ) {
-                            Label("Share", systemImage: "square.and.arrow.up")
-                                .foregroundColor(.white)
-                        }
-                        Button {
-                            showGallery.toggle()
-                        } label: {
-                            Label("Gallery", systemImage: "photo.stack")
-                                .foregroundColor(.white)
-                        }
-                    }
-                }
             }
-            .toolbarBackground(.black.opacity(0.8), for: .navigationBar)
+            .toolbarBackground(.white, for: .navigationBar)
             .toolbarBackground(.visible, for: .navigationBar)
             .sheet(isPresented: $showGallery, onDismiss: {
                 toolPickerShows = true  // Show tools again when gallery closes
