@@ -17,11 +17,13 @@ struct PurchaseCreditsView: View {
                         Text("Get More Generations")
                             .font(.title2)
                             .fontWeight(.bold)
+                            .foregroundColor(.white)
                         
                         Text("Choose a package below to continue creating amazing art.")
                             .multilineTextAlignment(.center)
                             .foregroundStyle(.secondary)
                             .padding(.horizontal)
+                            .foregroundColor(.white)
                         
                         VStack(spacing: 16) {
                             PurchaseOptionCard(
@@ -43,17 +45,27 @@ struct PurchaseCreditsView: View {
                         }
                         .padding()
                     }
-                }
-            }
-            .navigationBarTitleDisplayMode(.inline)
-            .toolbar {
-                ToolbarItem(placement: .confirmationAction) {
-                    Button("Done") {
-                        dismiss()
-                    }
+                    .padding()
                 }
             }
         }
+        .frame(maxWidth: .infinity, maxHeight: .infinity)
+        .background(
+            LinearGradient(
+                gradient: Gradient(colors: [.blue.opacity(0.8), .purple.opacity(0.8)]),
+                startPoint: .top,
+                endPoint: .bottom
+            )
+        )
+        .navigationBarTitleDisplayMode(.inline)
+        .toolbar {
+            ToolbarItem(placement: .confirmationAction) {
+                Button("Done") {
+                    dismiss()
+                }
+            }
+        }
+        .presentationBackground(.clear)
         .alert("Purchase Failed", isPresented: $showError, actions: {
             Button("OK", role: .cancel) { }
         }, message: {
