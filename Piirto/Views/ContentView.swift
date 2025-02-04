@@ -183,7 +183,7 @@ struct ContentView: View {
         guard processingState == .idle else { return }
         
         // Check if user has credits
-        guard creditsManager.useCredit() else {
+        guard CreditsManager.shared.useCredit() else {
             showPurchaseView = true
             return
         }

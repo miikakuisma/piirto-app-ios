@@ -1,9 +1,14 @@
 import SwiftUI
 import StoreKit
+import KeychainAccess
 
 @Observable
 class CreditsManager {
     static let shared = CreditsManager()
+    
+    private let keychain = Keychain(service: "dev.tatami.piirtoapp.credits")
+        .synchronizable(true)
+        .accessibility(.whenUnlocked)
     
     private let creditsKey = "remaining_credits"
     private let firstLaunchKey = "is_first_launch"
@@ -33,12 +38,20 @@ class CreditsManager {
     )
     
     var remainingCredits: Int {
-        get { UserDefaults.standard.integer(forKey: creditsKey) }
-        set { UserDefaults.standard.set(newValue, forKey: creditsKey) }
+        get {
+            guard let creditsString = try? keychain.get(creditsKey),
+                  let credits = Int(creditsString) else {
+                return 0
+            }
+            return credits
+        }
+        set {
+            try? keychain.set(String(newValue), key: creditsKey)
+        }
     }
     
     init() {
-        // Give 5 free credits on first launch
+        // Check if first launch
         if !UserDefaults.standard.bool(forKey: firstLaunchKey) {
             remainingCredits = 5
             UserDefaults.standard.set(true, forKey: firstLaunchKey)
@@ -49,6 +62,31 @@ class CreditsManager {
         guard remainingCredits > 0 else { return false }
         remainingCredits -= 1
         return true
+    }
+    
+    func addCredits(_ amount: Int) {
+        remainingCredits += amount
+    }
+    
+    // Add restore functionality
+    func restorePurchases() async throws {
+        try await AppStore.sync()
+        
+        for try await transaction in Transaction.currentEntitlements {
+            switch transaction {
+            case .verified(let transaction):
+                switch transaction.productID {
+                case "dev.tatami.piirtoapp.credits.50":
+                    await MainActor.run { remainingCredits += 50 }
+                case "dev.tatami.piirtoapp.credits.150":
+                    await MainActor.run { remainingCredits += 150 }
+                case "dev.tatami.piirtoapp.credits.400":
+                    await MainActor.run { remainingCredits += 400 }
+                default: break
+                }
+            case .unverified: break
+            }
+        }
     }
     
     struct Product {
