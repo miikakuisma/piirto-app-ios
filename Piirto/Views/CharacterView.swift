@@ -103,7 +103,7 @@ struct CharacterView: View {
             // Thinking bubble
             if processingState != .idle {
                 ThinkingBubbleView(message: processingState.message)
-                    .offset(y: -characterSize + 15)
+                    .offset(y: -characterSize + 50)
                     .transition(.scale.combined(with: .opacity))
             }
         }

@@ -49,7 +49,7 @@ class OpenAIService {
                     "content": [
                         [
                             "type": "text",
-                            "text": "Analyze this drawing and describe its composition, style, and key features in detail. Mention the type of image, such as 'illustration' or 'diagram'."
+                            "text": "Analyze this drawing and describe its composition, style, and key features. Identify the image type (e.g., 'simple diagram', 'detailed illustration', 'technical drawing', or 'sketch').If the image consists of basic geometric shapes, classify it as a diagram and describe the structure precisely. If the image has rough, organic strokes that suggest artistic intent, classify it as a sketch and describe its artistic qualities. Identify any recognizable objects in the image, specifying their type. For example, if it is a vehicle, determine whether it is a 'sports car', 'SUV', 'classic car', 'truck', or another type based on its shape. For vehicles, ensure that the AI preserves the original category—a sports car should remain a sports car, an SUV should remain an SUV, etc. Apply this level of analysis to all objects in the image, ensuring their core characteristics are maintained in the final output."
                         ],
                         [
                             "type": "image_url",
@@ -93,7 +93,7 @@ class OpenAIService {
         request.addValue("Bearer \(apiKey)", forHTTPHeaderField: "Authorization")
         request.addValue("application/json", forHTTPHeaderField: "Content-Type")
         
-        let prompt = "Create an artistic interpretation based on this description: \(description). Take account image type mentioned in the description and try to create an image that matches the type but improves it."
+        let prompt = "Generate an improved version of the image based on the following description: \(description). If the sketch is simplistic or cartoonish, preserve that style—do not make it more complex or technical. Refine the shapes without drastically altering proportions. Do not introduce additional technical details unless explicitly mentioned. If the image consists of simple geometric forms, preserve their proportions and angles exactly. If the drawing is a simple object (e.g., a car, house, airplane), strictly preserve the shape and proportions without exaggeration. If the object is a vehicle, maintain the original design language—if it looks like a modern sports car, refine it into a sleek, aerodynamic sports car, not a vintage vehicle. Do not add artistic re-interpretations unless specified."
         let payload: [String: Any] = [
             "model": "dall-e-3",
             "prompt": prompt,

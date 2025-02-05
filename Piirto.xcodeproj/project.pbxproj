@@ -8,6 +8,7 @@
 
 /* Begin PBXBuildFile section */
 		EA5F6C822D52514A00BAC7FA /* KeychainAccess in Frameworks */ = {isa = PBXBuildFile; productRef = EA5F6C812D52514A00BAC7FA /* KeychainAccess */; };
+		EA5F6C852D535BC700BAC7FA /* StoreKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = EA5F6C842D535BC700BAC7FA /* StoreKit.framework */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -28,6 +29,7 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		EA5F6C842D535BC700BAC7FA /* StoreKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = StoreKit.framework; path = System/Library/Frameworks/StoreKit.framework; sourceTree = SDKROOT; };
 		EAF5808D2D425C8800DD4FE5 /* Piirto.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Piirto.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		EAF5809F2D425C8900DD4FE5 /* PiirtoTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = PiirtoTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		EAF580A92D425C8900DD4FE5 /* PiirtoUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = PiirtoUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -70,6 +72,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				EA5F6C822D52514A00BAC7FA /* KeychainAccess in Frameworks */,
+				EA5F6C852D535BC700BAC7FA /* StoreKit.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -90,12 +93,21 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		EA5F6C832D535BC700BAC7FA /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+				EA5F6C842D535BC700BAC7FA /* StoreKit.framework */,
+			);
+			name = Frameworks;
+			sourceTree = "<group>";
+		};
 		EAF580842D425C8800DD4FE5 = {
 			isa = PBXGroup;
 			children = (
 				EAF5808F2D425C8800DD4FE5 /* Piirto */,
 				EAF580A22D425C8900DD4FE5 /* PiirtoTests */,
 				EAF580AC2D425C8900DD4FE5 /* PiirtoUITests */,
+				EA5F6C832D535BC700BAC7FA /* Frameworks */,
 				EAF5808E2D425C8800DD4FE5 /* Products */,
 			);
 			sourceTree = "<group>";
@@ -417,7 +429,7 @@
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 6;
+				CURRENT_PROJECT_VERSION = 9;
 				DEVELOPMENT_ASSET_PATHS = "\"Piirto/Preview Content\"";
 				DEVELOPMENT_TEAM = A94FDP2YJ9;
 				ENABLE_PREVIEWS = YES;
@@ -444,7 +456,7 @@
 				SUPPORTS_XR_DESIGNED_FOR_IPHONE_IPAD = NO;
 				SWIFT_EMIT_LOC_STRINGS = YES;
 				SWIFT_VERSION = 5.0;
-				TARGETED_DEVICE_FAMILY = 2;
+				TARGETED_DEVICE_FAMILY = "1,2";
 			};
 			name = Debug;
 		};
@@ -455,7 +467,7 @@
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 6;
+				CURRENT_PROJECT_VERSION = 9;
 				DEVELOPMENT_ASSET_PATHS = "\"Piirto/Preview Content\"";
 				DEVELOPMENT_TEAM = A94FDP2YJ9;
 				ENABLE_PREVIEWS = YES;
@@ -482,7 +494,7 @@
 				SUPPORTS_XR_DESIGNED_FOR_IPHONE_IPAD = NO;
 				SWIFT_EMIT_LOC_STRINGS = YES;
 				SWIFT_VERSION = 5.0;
-				TARGETED_DEVICE_FAMILY = 2;
+				TARGETED_DEVICE_FAMILY = "1,2";
 			};
 			name = Release;
 		};
